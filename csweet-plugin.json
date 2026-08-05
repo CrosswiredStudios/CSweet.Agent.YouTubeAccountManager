@@ -1,0 +1,203 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CrosswiredStudios/CSweetAgentSdk/main/schemas/csweet-plugin.v2.schema.json",
+  "manifestVersion": "2.0",
+  "kind": "agent",
+  "id": "com.csweet.youtube-account-manager",
+  "name": "YouTube Account Manager",
+  "version": "0.1.0",
+  "publisher": { "id": "com.csweet", "name": "C-Sweet" },
+  "runtime": {
+    "type": "dotnet-project",
+    "projectPath": "src/CSweet.Agent.YouTubeAccountManager/CSweet.Agent.YouTubeAccountManager.csproj",
+    "targetFramework": "net10.0",
+    "defaultActivationMode": "AlwaysOn",
+    "supportsMultipleInstallations": true,
+    "maximumConcurrentJobs": 1,
+    "workspaceAccess": "None"
+  },
+  "protocol": { "minimumVersion": "2.0", "maximumVersion": "2.x" },
+  "provides": [
+    {
+      "name": "assistant.converse.v1", "description": "Explains and coordinates supported YouTube account work.",
+      "inputSchema": { "type": "object", "additionalProperties": true },
+      "outputSchema": { "type": "object", "properties": { "message": { "type": "string" } }, "required": ["message"], "additionalProperties": false },
+      "executionTimeoutSeconds": 30, "idempotency": "none", "riskClass": "standard"
+    },
+    {
+      "name": "management.check-in.v1", "description": "Reports agent runtime health.",
+      "inputSchema": { "type": "object", "additionalProperties": false },
+      "outputSchema": { "type": "object", "properties": { "healthy": { "type": "boolean" }, "checkedAt": { "type": "string" } }, "required": ["healthy", "checkedAt"], "additionalProperties": false },
+      "executionTimeoutSeconds": 30, "idempotency": "none", "riskClass": "standard"
+    },
+    {
+      "name": "agent.configuration.describe.v1", "description": "Describes YouTube installation settings and progressive features.",
+      "inputSchema": { "type": "object", "additionalProperties": false },
+      "outputSchema": { "type": "object", "additionalProperties": true },
+      "executionTimeoutSeconds": 30, "idempotency": "none", "riskClass": "standard"
+    },
+    {
+      "name": "agent.configuration.update.v1", "description": "Validates a platform-owned settings update.",
+      "inputSchema": { "type": "object", "additionalProperties": true },
+      "outputSchema": { "type": "object", "properties": { "accepted": { "type": "boolean" }, "message": { "type": "string" }, "settings": { "type": "object" } }, "required": ["accepted", "message", "settings"], "additionalProperties": false },
+      "executionTimeoutSeconds": 30, "idempotency": "caller-key", "riskClass": "standard"
+    },
+    {
+      "name": "youtube.setup.channels.v1", "description": "Discovers YouTube channels accessible through the opaque installation connection.",
+      "inputSchema": { "type": "object", "additionalProperties": false },
+      "outputSchema": { "type": "object", "properties": { "healthy": { "type": "boolean" }, "channels": { "type": "array", "items": { "type": "object" } }, "message": { "type": ["string", "null"] }, "eligibility": { "type": ["object", "null"], "additionalProperties": { "type": "string" } } }, "required": ["healthy", "channels"], "additionalProperties": false },
+      "executionTimeoutSeconds": 30, "idempotency": "none", "riskClass": "bootstrap"
+    },
+    {
+      "name": "youtube.setup.validate.v1", "description": "Validates the confirmed channel and base YouTube permissions during restricted setup.",
+      "inputSchema": { "type": "object", "properties": { "channelId": { "type": "string", "minLength": 1, "maxLength": 256 } }, "required": ["channelId"], "additionalProperties": false },
+      "outputSchema": { "type": "object", "properties": { "healthy": { "type": "boolean" }, "channels": { "type": "array" }, "message": { "type": ["string", "null"] }, "eligibility": { "type": ["object", "null"], "additionalProperties": { "type": "string" } } }, "required": ["healthy", "channels"], "additionalProperties": false },
+      "executionTimeoutSeconds": 30, "idempotency": "none", "riskClass": "bootstrap"
+    },
+    {
+      "name": "youtube.account.sync.v1", "description": "Synchronizes authoritative channel, content, eligibility, and engagement metadata.",
+      "inputSchema": { "$ref": "#/$defs/youtubeOperation" }, "outputSchema": { "$ref": "#/$defs/youtubeResult" },
+      "executionTimeoutSeconds": 300, "idempotency": "caller-key", "riskClass": "standard"
+    },
+    {
+      "name": "youtube.video.publish.v1", "description": "Uploads and schedules an organization media asset through brokered resumable transfer.",
+      "inputSchema": { "$ref": "#/$defs/youtubeOperation" }, "outputSchema": { "$ref": "#/$defs/youtubeResult" },
+      "executionTimeoutSeconds": 86400, "idempotency": "caller-key", "riskClass": "public-mutation"
+    },
+    {
+      "name": "youtube.video.manage.v1", "description": "Manages video metadata, privacy, schedules, thumbnails, playlists, and captions.",
+      "inputSchema": { "$ref": "#/$defs/youtubeOperation" }, "outputSchema": { "$ref": "#/$defs/youtubeResult" },
+      "executionTimeoutSeconds": 300, "idempotency": "caller-key", "riskClass": "public-mutation"
+    },
+    {
+      "name": "youtube.engagement.manage.v1", "description": "Synchronizes comments and performs approved replies or moderation actions.",
+      "inputSchema": { "$ref": "#/$defs/youtubeOperation" }, "outputSchema": { "$ref": "#/$defs/youtubeResult" },
+      "executionTimeoutSeconds": 300, "idempotency": "caller-key", "riskClass": "public-mutation"
+    },
+    {
+      "name": "youtube.live.manage.v1", "description": "Manages live broadcasts, streams, chat, and health without disclosing stream keys.",
+      "inputSchema": { "$ref": "#/$defs/youtubeOperation" }, "outputSchema": { "$ref": "#/$defs/youtubeResult" },
+      "executionTimeoutSeconds": 300, "idempotency": "caller-key", "riskClass": "high"
+    },
+    {
+      "name": "youtube.partner.manage.v1", "description": "Performs eligible membership and Content ID partner workflows under hard approvals.",
+      "inputSchema": { "$ref": "#/$defs/youtubeOperation" }, "outputSchema": { "$ref": "#/$defs/youtubeResult" },
+      "executionTimeoutSeconds": 300, "idempotency": "caller-key", "riskClass": "high"
+    },
+    {
+      "name": "youtube.analytics.report.v1", "description": "Produces official non-revenue YouTube engagement and audience metric snapshots.",
+      "inputSchema": { "$ref": "#/$defs/youtubeOperation" }, "outputSchema": { "$ref": "#/$defs/youtubeResult" },
+      "executionTimeoutSeconds": 300, "idempotency": "caller-key", "riskClass": "standard"
+    }
+  ],
+  "requires": [
+    { "name": "web.fetch.v1", "scope": "organization", "purpose": "Send bounded read requests through the credential-bound HTTP broker." },
+    { "name": "web.request.v1", "scope": "organization", "purpose": "Send approved YouTube mutations without revealing OAuth tokens." },
+    { "name": "platform.media.transfer.v1", "scope": "organization", "purpose": "Stream approved organization media assets through resumable uploads." },
+    { "name": "platform.managed-action.execute.v1", "scope": "organization", "purpose": "Enforce manager, CEO, standing-policy, and hard approval gates." },
+    { "name": "platform.engagement-inbox.upsert.v1", "scope": "organization", "purpose": "Persist deduplicated YouTube engagement without database access." },
+    { "name": "platform.metric-snapshot.write.v1", "scope": "organization", "purpose": "Persist official YouTube metric snapshots." },
+    { "name": "platform.synchronization-checkpoint.v1", "scope": "organization", "purpose": "Coordinate restart-safe comment and reporting synchronization." },
+    { "name": "platform.business-profile.read.v1", "scope": "organization", "purpose": "Ground private comment-reply drafts in the organization's approved business identity and voice." }
+  ],
+  "events": { "subscribes": ["com.csweet.agent.onboarded.v1"] },
+  "configuration": [
+    { "key": "connectedChannelId", "type": "text", "label": "Connected YouTube channel", "required": false, "secret": false },
+    { "key": "approvalMode", "type": "select", "label": "Approval mode", "required": true, "secret": false, "defaultValue": "Manager Approval", "options": [{ "value": "Manager Approval", "label": "Manager Approval" }, { "value": "CEO Approval", "label": "CEO Approval" }, { "value": "Fully Autonomous", "label": "Fully Autonomous within an owner-approved policy" }] },
+    { "key": "defaultPrivacy", "type": "select", "label": "Default video privacy", "required": true, "secret": false, "defaultValue": "private", "options": [{ "value": "private", "label": "Private" }, { "value": "unlisted", "label": "Unlisted" }, { "value": "public", "label": "Public" }] },
+    { "key": "commentCadenceMinutes", "type": "number", "label": "Comment sync cadence (minutes)", "required": true, "secret": false, "defaultValue": 15 },
+    { "key": "reportingCadence", "type": "select", "label": "Reporting cadence", "required": true, "secret": false, "defaultValue": "weekly", "options": [{ "value": "weekly", "label": "Weekly" }] }
+  ],
+  "credentials": [],
+  "connections": [
+    {
+      "id": "google-youtube", "type": "oauth2", "providerProfile": "com.csweet.google.youtube",
+      "allowedOrigins": ["https://www.googleapis.com", "https://youtubeanalytics.googleapis.com"],
+      "secretResponseFields": ["/cdn/ingestionInfo/streamName"],
+      "scopeSets": [
+        { "id": "base", "label": "Read channel and analytics", "purpose": "Read channel details, content metadata, comments, and official non-revenue analytics.", "required": true, "scopes": ["https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/yt-analytics.readonly"] },
+        { "id": "publishing", "label": "Publish videos", "purpose": "Upload videos to the confirmed channel.", "required": false, "scopes": ["https://www.googleapis.com/auth/youtube.upload"] },
+        { "id": "management", "label": "Manage content and engagement", "purpose": "Manage videos, comments, captions, playlists, and live operations.", "required": false, "scopes": ["https://www.googleapis.com/auth/youtube.force-ssl"] },
+        { "id": "memberships", "label": "Manage memberships", "purpose": "Access creator membership workflows when the channel is eligible.", "required": false, "scopes": ["https://www.googleapis.com/auth/youtube.channel-memberships.creator"] },
+        { "id": "partner", "label": "Partner and Content ID", "purpose": "Access eligible YouTube Partner and Content ID operations.", "required": false, "scopes": ["https://www.googleapis.com/auth/youtubepartner"] }
+      ]
+    }
+  ],
+  "setup": {
+    "required": true,
+    "entryFlow": "onboarding",
+    "flows": [
+      {
+        "id": "onboarding", "title": "Connect your YouTube channel",
+        "steps": [
+          { "id": "access", "kind": "permission-summary", "title": "Review access and protections", "description": "Start with read-only channel and analytics access. Public mutations remain approval-governed." },
+          { "id": "connect", "kind": "oauth-connect", "title": "Connect Google", "connection": "google-youtube", "scopeSet": "base" },
+          { "id": "channel", "kind": "account-selector", "title": "Confirm your YouTube channel", "capability": "youtube.setup.channels.v1", "configurationKeys": ["connectedChannelId"] },
+          { "id": "preferences", "kind": "form", "title": "Choose approval and content defaults", "configurationKeys": ["approvalMode", "defaultPrivacy", "commentCadenceMinutes", "reportingCadence"] },
+          { "id": "health", "kind": "health-check", "title": "Validate access and eligibility", "capability": "youtube.setup.validate.v1" },
+          { "id": "confirm", "kind": "confirmation", "title": "Activate your YouTube manager", "description": "C-Sweet will run the initial synchronization and introduce the agent to its approver." }
+        ]
+      },
+      {
+        "id": "settings", "title": "YouTube connection and permissions",
+        "steps": [
+          { "id": "settings-summary", "kind": "permission-summary", "title": "Connection health and granted permissions" },
+          { "id": "settings-form", "kind": "form", "title": "Approval, privacy, and cadence", "configurationKeys": ["approvalMode", "defaultPrivacy", "commentCadenceMinutes", "reportingCadence"] },
+          { "id": "publishing-permission", "kind": "permission-request", "title": "Enable publishing", "connection": "google-youtube", "scopeSet": "publishing" },
+          { "id": "management-permission", "kind": "permission-request", "title": "Enable content and engagement management", "connection": "google-youtube", "scopeSet": "management" },
+          { "id": "memberships-permission", "kind": "permission-request", "title": "Enable eligible memberships workflows", "connection": "google-youtube", "scopeSet": "memberships" },
+          { "id": "partner-permission", "kind": "permission-request", "title": "Enable eligible partner and Content ID workflows", "connection": "google-youtube", "scopeSet": "partner" },
+          { "id": "disconnect", "kind": "disconnect", "title": "Disconnect or reconnect Google", "connection": "google-youtube" }
+        ]
+      }
+    ]
+  },
+  "webAccess": {
+    "mode": "Allowlist",
+    "purpose": "Use YouTube Data, Analytics, upload, and eligible Partner APIs through C-Sweet's OAuth broker.",
+    "rules": [
+      { "scheme": "https", "host": "www.googleapis.com", "pathPrefix": "/youtube/v3/channels", "methods": ["GET"], "protocol": "http", "purpose": "Discover and validate channels during restricted setup.", "connection": "google-youtube", "bootstrap": true },
+      { "scheme": "https", "host": "www.googleapis.com", "pathPrefix": "/youtube/", "methods": ["GET", "POST", "PUT", "DELETE"], "protocol": "http", "purpose": "YouTube Data and upload APIs.", "connection": "google-youtube" },
+      { "scheme": "https", "host": "www.googleapis.com", "pathPrefix": "/upload/youtube/", "methods": ["POST", "PUT"], "protocol": "http", "purpose": "Brokered resumable video, thumbnail, and caption uploads.", "connection": "google-youtube" },
+      { "scheme": "https", "host": "youtubeanalytics.googleapis.com", "pathPrefix": "/v2/", "methods": ["GET"], "protocol": "http", "purpose": "Official YouTube Analytics reports.", "connection": "google-youtube" }
+    ]
+  },
+  "ui": [
+    { "kind": "personal-settings", "id": "youtube-settings", "title": "YouTube channel and permissions", "flow": "settings" }
+  ],
+  "catalog": {
+    "summary": "Securely manages one YouTube channel's content, engagement, live operations, and official metrics.",
+    "category": "Marketing",
+    "role": { "key": "youtube-account-manager", "name": "YouTube Account Manager" },
+    "license": { "spdxId": "MIT" },
+    "iconUrls": [],
+    "roleAliases": ["YouTube Manager", "Video Content Manager", "Community Manager"],
+    "keywords": ["youtube", "video", "comments", "analytics", "live"],
+    "documentationUrl": "README.md"
+  },
+  "$defs": {
+    "youtubeOperation": {
+      "type": "object",
+      "properties": {
+        "channelId": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "action": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "idempotencyKey": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "payload": { "type": ["object", "null"] },
+        "resourceId": { "type": ["string", "null"], "maxLength": 512 },
+        "mediaAssetId": { "type": ["string", "null"], "format": "uuid" },
+        "approvalId": { "type": ["string", "null"] },
+        "expectedRevision": { "type": ["integer", "null"], "minimum": 0 }
+      },
+      "required": ["channelId", "action", "idempotencyKey"],
+      "additionalProperties": false
+    },
+    "youtubeResult": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string" }, "action": { "type": "string" }, "channelId": { "type": "string" },
+        "resourceId": { "type": ["string", "null"] }, "data": { "type": ["object", "array", "null"] }, "approvalId": { "type": ["string", "null"] }
+      },
+      "required": ["status", "action", "channelId"],
+      "additionalProperties": false
+    }
+  }
+}

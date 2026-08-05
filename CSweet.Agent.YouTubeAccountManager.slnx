@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/CSweet.Agent.YouTubeAccountManager/CSweet.Agent.YouTubeAccountManager.csproj" />
+  <Project Path="tests/CSweet.Agent.YouTubeAccountManager.Tests/CSweet.Agent.YouTubeAccountManager.Tests.csproj" />
+</Solution>
