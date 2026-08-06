@@ -20,7 +20,7 @@ Comments are synchronized every 15 minutes into the platform engagement inbox. P
 
 ## Development
 
-The published project pins `CSweet.Agent.SDK` 3.1.0. To test against a local SDK checkout:
+The published project pins `CSweet.Agent.SDK` 3.1.1. To test against a local SDK checkout:
 
 ```powershell
 dotnet test CSweet.Agent.YouTubeAccountManager.slnx -p:UseLocalCSweetAgentSdk=true -p:CSweetAgentSdkRepositoryRoot=C:\path\to\CSweetAgentSdk
