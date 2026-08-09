@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using CSweet.Agent.SDK;
+using CSweet.WorkManagement.Contracts;
 
 namespace CSweet.Agent.YouTubeAccountManager;
 
@@ -33,7 +34,12 @@ public sealed class YouTubeAccountManagerAgent : CSweetAgentBase, IAgentConnecte
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     public override string AgentId => "com.csweet.youtube-account-manager";
-    public override string Version => "0.1.0";
+    public override string Version => "0.2.0";
+
+    public override Task<PersonalTodoResult> HandlePersonalTodoAsync(
+        PersonalTodoItem item, AgentRuntimeContext context, CancellationToken cancellationToken) =>
+        Task.FromResult(PersonalTodoResult.Blocked(
+            "YouTube operations require a typed channel operation and the existing approval policy; free-form personal queue requests are unsupported."));
 
     protected override AgentConfigurationBuilder Configure(AgentConfigurationBuilder builder) => builder
         .Text("connectedChannelId", "Connected YouTube channel", false)
