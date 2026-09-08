@@ -4,7 +4,7 @@
   "kind": "agent",
   "id": "com.csweet.youtube-account-manager",
   "name": "Jordan Mitchell",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": { "id": "com.csweet", "name": "C-Sweet" },
   "runtime": {
     "type": "dotnet-project",
@@ -90,6 +90,11 @@
     }
   ],
   "requires": [
+    {"name": "work.calendar.read.v1", "scope": "organization", "purpose": "Operate the business calendar within event ownership and reporting authority."},
+    {"name": "work.calendar.create.v1", "scope": "organization", "purpose": "Operate the business calendar within event ownership and reporting authority."},
+    {"name": "work.calendar.update.v1", "scope": "organization", "purpose": "Operate the business calendar within event ownership and reporting authority."},
+    {"name": "work.calendar.cancel.v1", "scope": "organization", "purpose": "Operate the business calendar within event ownership and reporting authority."},
+    {"name": "work.calendar.schedule.v1", "scope": "organization", "purpose": "Operate the business calendar within event ownership and reporting authority."},
     { "name": "work.personal-todo.read.v1", "scope": "organization", "purpose": "Read resource-scoped personal queues" },
     { "name": "work.personal-todo.add.v1", "scope": "organization", "purpose": "Add self or direct-report personal work" },
     { "name": "work.personal-todo.reorder.v1", "scope": "organization", "purpose": "Reorder directly managed personal work" },
@@ -107,7 +112,7 @@
     { "name": "platform.synchronization-checkpoint.v1", "scope": "organization", "purpose": "Coordinate restart-safe comment and reporting synchronization." },
     { "name": "platform.business-profile.read.v1", "scope": "organization", "purpose": "Ground private comment-reply drafts in the organization's approved business identity and voice." }
   ],
-  "events": { "subscribes": ["com.csweet.agent.onboarded.v1", "com.csweet.work.personal-todo.available.v1", "com.csweet.communication.message.mentioned.v1"] },
+  "events": { "subscribes": ["com.csweet.calendar.reminder-due.v1", "com.csweet.agent.onboarded.v1", "com.csweet.work.personal-todo.available.v1", "com.csweet.communication.message.mentioned.v1"] },
   "configuration": [
     { "key": "connectedChannelId", "type": "text", "label": "Connected YouTube channel", "required": false, "secret": false },
     { "key": "approvalMode", "type": "select", "label": "Approval mode", "required": true, "secret": false, "defaultValue": "Manager Approval", "options": [{ "value": "Manager Approval", "label": "Manager Approval" }, { "value": "CEO Approval", "label": "CEO Approval" }, { "value": "Fully Autonomous", "label": "Fully Autonomous within an owner-approved policy" }] },

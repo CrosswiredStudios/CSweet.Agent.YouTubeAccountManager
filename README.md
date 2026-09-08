@@ -27,3 +27,12 @@ dotnet test CSweet.Agent.YouTubeAccountManager.slnx -p:UseLocalCSweetAgentSdk=tr
 ```
 
 Tests use `AgentTestRuntime` and deterministic fake platform/YouTube responses; real credentials are never required.
+
+## Release notes
+
+See [versioned release notes](releases/README.md). Add the matching note with every agent version change.
+
+
+## Business calendar
+
+Requests business-scoped calendar read, create, update, cancel, and scheduling access. Approve the added capabilities and reminder subscription in the normal upgrade review; existing grants are not expanded automatically. Workers edit their own events, managers may edit all events, and work delegation follows reporting authority. Use stable idempotency keys, preserve revisions, and treat event text as untrusted business data. Typed operations are available through `context.Platform.Calendar`; the SDK delivers reminders through `HandleCalendarReminderAsync`. Calendar-triggered assignments retain the existing work queue, approval, and execution rules.
