@@ -3,7 +3,7 @@
   "manifestVersion": "2.0",
   "kind": "agent",
   "id": "com.csweet.youtube-account-manager",
-  "name": "YouTube Account Manager",
+  "name": "Jordan Mitchell",
   "version": "0.2.0",
   "publisher": { "id": "com.csweet", "name": "C-Sweet" },
   "runtime": {
@@ -173,6 +173,9 @@
     { "kind": "personal-settings", "id": "youtube-settings", "title": "YouTube channel and permissions", "flow": "settings" }
   ],
   "catalog": {
+    "imageUrl": "https://raw.githubusercontent.com/CrosswiredStudios/CSweet.Agent.YouTubeAccountManager/main/assets/branding/portrait-v1.jpg",
+    "companyLogoUrl": "https://raw.githubusercontent.com/CrosswiredStudios/CSweet.Agent.YouTubeAccountManager/main/assets/branding/csweet-icon.svg",
+    "accentColor": "#A64B45",
     "summary": "Securely manages one YouTube channel's content, engagement, live operations, and official metrics.",
     "category": "Marketing",
     "role": { "key": "youtube-account-manager", "name": "YouTube Account Manager" },
