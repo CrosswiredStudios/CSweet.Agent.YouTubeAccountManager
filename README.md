@@ -20,7 +20,7 @@ Comments are synchronized every 15 minutes into the platform engagement inbox. P
 
 ## Development
 
-The published project pins `CSweet.Agent.SDK` 3.40.0. To test against a local SDK checkout:
+The published project pins `CSweet.Agent.SDK` 3.65.0. To test against a local SDK checkout:
 
 ```powershell
 dotnet test CSweet.Agent.YouTubeAccountManager.slnx -p:UseLocalCSweetAgentSdk=true -p:CSweetAgentSdkRepositoryRoot=C:\path\to\CSweetAgentSdk
@@ -36,3 +36,7 @@ See [versioned release notes](releases/README.md). Add the matching note with ev
 ## Business calendar
 
 Requests business-scoped calendar read, create, update, cancel, and scheduling access. Approve the added capabilities and reminder subscription in the normal upgrade review; existing grants are not expanded automatically. Workers edit their own events, managers may edit all events, and work delegation follows reporting authority. Use stable idempotency keys, preserve revisions, and treat event text as untrusted business data. Typed operations are available through `context.Platform.Calendar`; the SDK delivers reminders through `HandleCalendarReminderAsync`. Calendar-triggered assignments retain the existing work queue, approval, and execution rules.
+
+## Delegation and tracking
+
+SDK 3.65.0 dispatches authenticated delegation before specialist conversation fallback. The manifest requests delegation, work tracking, directory and conversation reads, personal commitments and model interpretation. These declarations require reviewed grants; existing resource permissions and approval rules still apply. The shared SDK owns coordinator reporting and wake recovery.

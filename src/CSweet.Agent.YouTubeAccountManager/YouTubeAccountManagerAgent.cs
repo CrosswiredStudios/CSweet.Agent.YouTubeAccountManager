@@ -34,7 +34,7 @@ public sealed class YouTubeAccountManagerAgent : CSweetAgentBase, IAgentConnecte
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     public override string AgentId => "com.csweet.youtube-account-manager";
-    public override string Version => "0.3.0";
+    public override string Version => "0.4.0";
 
     public override Task<PersonalTodoResult> HandlePersonalTodoAsync(
         PersonalTodoItem item, AgentRuntimeContext context, CancellationToken cancellationToken) =>
@@ -42,6 +42,8 @@ public sealed class YouTubeAccountManagerAgent : CSweetAgentBase, IAgentConnecte
             "YouTube operations require a typed channel operation and the existing approval policy; free-form personal queue requests are unsupported."));
 
     protected override AgentConfigurationBuilder Configure(AgentConfigurationBuilder builder) => builder
+        .LlmProvider("llmProviderId", "Reasoning service", required: false, description: "Company-approved reasoning service for delegation and tracking.")
+        .LlmModel("llmModel", "Reasoning model", "llmProviderId", required: false)
         .Text("connectedChannelId", "Connected YouTube channel", false)
         .Select("approvalMode", "Approval mode",
             [new("Manager Approval", "Manager Approval"), new("CEO Approval", "CEO Approval"),
@@ -54,6 +56,11 @@ public sealed class YouTubeAccountManagerAgent : CSweetAgentBase, IAgentConnecte
             minimum: 15, maximum: 1440, step: 15, defaultValue: 15)
         .Select("reportingCadence", "Reporting cadence", [new("weekly", "Weekly")],
             true, defaultValue: "weekly");
+
+    public override Task<DelegationResponse> HandleDelegationReceivedAsync(DelegationSnapshot delegation,
+        AgentRuntimeContext context, CancellationToken cancellationToken) =>
+        Task.FromResult<DelegationResponse>(new DelegationResponse.Clarification(
+            "Please specify the channel and typed YouTube operation; publishing and other managed actions retain the existing approval policy."));
 
     public override async Task HandleEventAsync(AgentEventEnvelope message, AgentRuntimeContext context,
         CancellationToken cancellationToken)
