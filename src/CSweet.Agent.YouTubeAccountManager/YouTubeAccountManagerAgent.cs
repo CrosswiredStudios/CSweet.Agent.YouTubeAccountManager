@@ -34,7 +34,7 @@ public sealed class YouTubeAccountManagerAgent : CSweetAgentBase, IAgentConnecte
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     public override string AgentId => "com.csweet.youtube-account-manager";
-    public override string Version => "0.4.0";
+    public override string Version => "0.4.1";
 
     public override Task<PersonalTodoResult> HandlePersonalTodoAsync(
         PersonalTodoItem item, AgentRuntimeContext context, CancellationToken cancellationToken) =>
